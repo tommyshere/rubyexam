@@ -1,0 +1,29 @@
+<h1><%= @event.name %></h1>
+<%= @event.description %>
+<p>Created by: 
+<% if current_user == @event.user %>
+	<p>YOU</p>
+<% else %>
+	<p><%= @event.user.first_name %></p>
+<% end %>
+<p>Members:</p>
+<p><% @join.each do |j| %></p>
+	<p><%= j.user.first_name %></p>
+<% end %>
+
+<% if Join.find_by(user_id: session[:user_id], event_id: @event.id) == nil %>
+	<form action ='/joins' method='post'>
+		<input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>">
+		<input type='hidden' name='event_id' value='<%= @event.id %>'>
+		<input type='submit' value='Join'>
+	</form>
+<% else %>
+	<form action='/joins/<%= @event.id %>' method='post'>
+		<input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>">
+		<input type='hidden' name='_method' value="delete">
+		<input type='hidden' name='event_id' value='<%= @event.id %>'>
+		<input type='submit' value='UnJoin'>
+	</form>
+<% end %>
+
+<a href='/groups'>Dashboard</a>
